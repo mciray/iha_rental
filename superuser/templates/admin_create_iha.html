@@ -1,0 +1,68 @@
+{% extends 'admin_layout.html' %}
+{% block site-title %}
+Admin create  iha
+{% endblock site-title %}
+{% block site-content %}
+<div class="container">
+<div class="row justify-content-center">
+    <div class="col-md-6 text-center">
+
+        <form method="post"  enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+
+</div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('form').on('submit', function(e) {
+            e.preventDefault();
+
+            var formData = new FormData(this);
+            function showSuccessAlert(message) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Başarılı!',
+                    text: message,
+                    timer: 2000, 
+                    showConfirmButton: false,
+                });
+            }
+            
+            function showErrorAlert(message) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Hata!',
+                    text: message,
+                });
+            }
+            $.ajax({
+                type: 'POST',
+                url: '/api/ihas/',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                success: function (data) {
+              console.log("Başarıyla güncellenen kiralama:", data);
+              showSuccessAlert("Başarıyla oluşturuldu");
+              
+              setTimeout(function () {
+                  location.href = "/superuser/";
+              }, 2000);
+          },
+          error: function (error) {
+              console.error("Kiralama güncelleme hatası:", error);
+              showErrorAlert("Kiralama güncelleme hatası");
+          }
+            });
+        });
+    });
+</script>
+{% endblock  %}

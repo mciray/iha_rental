@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     ## app's
     'rent_app',
     'rental_api',
+    'superuser',
     'drf_yasg',
     ## drf
     'rest_framework',

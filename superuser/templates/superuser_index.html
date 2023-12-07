@@ -1,0 +1,194 @@
+
+{% extends 'admin_layout.html' %}
+{% block site-title %}
+Admin Panel - User Activity Graph
+{% endblock site-title %}
+{% block site-content %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+      
+        #sidebar {
+            min-width: 250px;
+            max-width: 250px;
+            height: 100vh;
+            background-color: #343a40;
+            color: #fff;
+            transition: all 0.3s;
+        }
+        #sidebar .sidebar-header {
+            padding: 20px;
+            background: #6d7fcc;
+        }
+        #sidebar ul.components {
+            padding: 20px 0;
+        }
+        #sidebar ul p {
+            color: #fff;
+            padding: 10px;
+        }
+        #sidebar ul li a {
+            padding: 10px;
+            font-size: 1.1em;
+            display: block;
+            color: #fff;
+        }
+        #sidebar ul li a:hover {
+            color: #7386D5;
+            background: #fff;
+        }
+        #content {
+            width: 100%;
+            padding: 20px;
+            min-height: 100vh;
+            transition: all 0.3s;
+        }
+       
+    </style>
+</head>
+<body>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3" id="sidebar">
+                <div class="sidebar-header">
+                    <h3>Admin Panel</h3>
+                </div>
+                <ul class="list-unstyled components">
+                    <p>Navigation</p>
+                    <li class="active">
+                        <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">oluştur</a>
+                        <ul class="collapse list-unstyled" id="homeSubmenu">
+                            <li>
+                                <a href={% url 'admin_create_iha' %}>iha oluştur</a>
+                            </li>
+                         
+                            <li>
+                                <a href='#'>rentals</a>
+                            </li>
+                            <li>
+                                <a href='#'>Araç listesi</a>
+                            </li>
+                            
+                            <li>
+                                <a href="javascript:void(0);" onclick="creatIhaType()">Create iha Type</a>
+                            </li>
+                            
+                        </ul>
+                    </li>
+                    <li>
+                        <a href='#'>Contact</a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Content -->
+            <div class="col-md-9" id="content">
+             
+                    <canvas  id="userActivityGraph"></canvas>
+               
+            </div>
+
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            fetch('{% url "user_activity_data" %}')  // Use the Django URL tag to get the correct URL
+                .then(response => response.json())
+                .then(data => {
+                    const ctx = document.getElementById('userActivityGraph').getContext('2d');
+                    const chart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: data.rental_activity.map(activity => activity.user__username),
+                            datasets: [{
+                                label: 'Rental Activities',
+                                backgroundColor: '#ff6e05',
+                                borderColor: '#ff6e05',
+                                borderWidth: 1,
+            
+                                barThickness: 20,  
+                                data: data.rental_activity.map(activity => activity.rental_count)
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        beginAtZero: true,
+                                        fontColor: 'black',  // Adjust tick font color
+                                    },
+                                    gridLines: {
+                                        display: true,
+                                        color: 'rgba(0, 0, 0, 0.1)'  // Adjust grid line color
+                                    }
+                                }],
+                                xAxes: [{
+                                    ticks: {
+                                        fontColor: 'black',  // Adjust tick font color
+                                    },
+                                    gridLines: {
+                                        display: false  // Set to true if you want grid lines for xAxes
+                                    }
+                                }]
+                            },
+                            legend: {
+                                labels: {
+                                    fontColor: 'black'  // Adjust legend font color
+                                }
+                            },
+                            layout: {
+                                padding: {
+                                    left: 10,
+                                    right: 10,
+                                    top: 0,
+                                    bottom: 0
+                                }
+                            }
+                        }
+                    });
+                });
+        });
+    </script>
+    <script>
+        function creatIhaType() {
+            const iha_type = prompt("Araba Türünü giriniz:");
+            if (!iha_type) return;
+    
+            const data = { name: iha_type };
+    
+            $.ajax({
+                url: "{% url 'api:iha_create' %}",  
+                type: "POST",
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                dataType: "json",
+                headers: { "X-CSRFToken": getCookie('csrftoken') }, // CSRF token ismi düzeltildi
+                success: function(data) {
+                    console.log(data);
+                    alert("Başarıyla oluşturuldu: " + data.name);
+                },
+                error: function(xhr, errmsg, err) {
+                    console.error(`Hata: ${errmsg}`);
+                    alert("Bir hata oluştu: " + xhr.status + ": " + xhr.responseText);
+                }
+            });
+        }
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== "") {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+{% endblock  %}

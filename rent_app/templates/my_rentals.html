@@ -73,12 +73,12 @@
                         
                             {% if now_renting %}
                           
-                            <span>Aktif kirada olanlar </span>
+                            <span>Aktif kirada olan iha'lar</span>
                                 {% for d in now_renting %}
                                     <tr>
                                         <td>{{d.id}}</td>
                                         <td><a href={{d.photo}}>foto</a></td>
-                                        <td>{{ d.make }}</td>
+                                        <td>{{ d.brand }}</td>
                                         <td>{{ d.model }}</td>
                                         <td>{{ d.year }}</td>
                                         <td>{{ d.price_per_day }}</td>
@@ -88,7 +88,7 @@
 
                             {% else %}
                                 <tr>
-                                    <p>Aktif sürülen araç bulunmamakta.</p>
+                                    <p>Aktif sürülen iha bulunmamakta.</p>
                                 </tr>
                                 
                             {% endif %}
@@ -106,7 +106,7 @@
     </div>
     <div class="row justify-content-end">
         <div class="col-md-5 text-center">
-            <span>aktif kirada olmayan araçlar</span>
+            <span>aktif kirada olmayan iha'lar</span>
             {% if rent_list %}
     <div class="table-responsive">
         <table class="table table-bordered table-hover">
@@ -127,7 +127,7 @@
                     <td>
                         <a href="{{ d.photo }}" target="_blank">Fotoğraf Görüntüle</a>
                     </td>
-                    <td>{{ d.make }}</td>
+                    <td>{{ d.brand }}</td>
                     <td>{{ d.model }}</td>
                     <td>{{ d.year }}</td>
                     <td>{{ d.price_per_day }}</td>
