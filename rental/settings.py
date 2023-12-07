@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     ## drf
     'rest_framework',
+    
     ## django-allauth setup 
     'allauth',
     'allauth.account',

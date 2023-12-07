@@ -14,12 +14,10 @@ class RentalDetailSerializer(serializers.ModelSerializer):
         iha_serilize=IhaSerializer(object.iha)
         return iha_serilize.data
 class RentalSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Rental
         fields = '__all__'
         
-
 class IhaSerializer(serializers.ModelSerializer):
     iha_type=serializers.SerializerMethodField()
     class Meta:
@@ -28,6 +26,7 @@ class IhaSerializer(serializers.ModelSerializer):
     def get_iha_type(self,object):
         iha_serilize=IhaTypeSerializers(object.iha_type)
         return iha_serilize.data
+    
 class IhaTypeSerializers(serializers.ModelSerializer):
     class Meta:
         model = Ihatype

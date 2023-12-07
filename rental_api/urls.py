@@ -25,12 +25,12 @@ urlpatterns = [
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-    
-  
 
 
+    path('rentals/create/',RentalListCreateView.as_view(),name="rental_create"),
+    path('rental/dates/<int:id>/',IhaRentDaysAPIView.as_view(),name="ihas_rent_days"),
     path('rental/delete/<int:pk>/',RentalDeleteAPIView.as_view(),name="rental-delete"),
- 
+    path('rental/user/<int:id>/',RentalGetAPIView.as_view(),name="users_rent"),
     
     ## get User's rental
    

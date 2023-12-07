@@ -1,0 +1,214 @@
+{% extends "layout.html" %}
+{% block site-title %}
+  
+{% endblock site-title %}
+{% block site-content %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<div class="container mt-5">
+    {% if messages %}
+    <ul class="messages bg-danger rounded-4 p-3 w-25 ">
+      {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }} mx-5"{% endif %}>{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+    <div class="row justify-content-center text-center">
+    
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">My Rentals</div>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Renter Name</th>
+                                <th>Rental Date</th>
+                                <th>Return Date</th>
+                                <th>Car</th>
+                                <th>Kaç günlük tutuldu</th>
+                                <th>Toplam fiyat</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                     
+                                
+                            {% for d in data %}
+                            <tr>
+                                <td>{{ d.renter_name }}</td>
+                                <td>{{ d.rental_date }}</td>
+                                <td>{{ d.return_date }}</td>
+                                <td>{{d.iha}}</td>
+                                <td>{{d.date_difference}}</td>
+                                <td>{{d.total_price}}</td>
+            
+                                <td><button id="{{d.id}}" class=" btn btn-danger delete-rental">delete</button></td>
+                                <td><button class=" btn btn-primary update-rental"><a class="text-white " href={% url 'update_rental'  d.id %}>güncelle</a></button></td>
+
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+       
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">My Rentals</div>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>car</th>
+                                <th>car foto </th>
+                                <th>car name</th>
+                                <th>car model</th>
+                                <th>car year</th>
+                                <th>price(per day)</th>
+                               
+                            </tr>
+                        </thead>
+                        <tbody>
+                        
+                            {% if now_renting %}
+                          
+                            <span>Aktif kirada olanlar </span>
+                                {% for d in now_renting %}
+                                    <tr>
+                                        <td>{{d.id}}</td>
+                                        <td><a href={{d.photo}}>foto</a></td>
+                                        <td>{{ d.make }}</td>
+                                        <td>{{ d.model }}</td>
+                                        <td>{{ d.year }}</td>
+                                        <td>{{ d.price_per_day }}</td>
+                                    </tr>
+                              
+                                      {% endfor %}
+
+                            {% else %}
+                                <tr>
+                                    <p>Aktif sürülen araç bulunmamakta.</p>
+                                </tr>
+                                
+                            {% endif %}
+
+                        </tbody>
+                    </table>
+                    
+                    
+                </div>
+                
+            </div>
+            
+        </div>
+        
+    </div>
+    <div class="row justify-content-end">
+        <div class="col-md-5 text-center">
+            <span>aktif kirada olmayan araçlar</span>
+            {% if rent_list %}
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="thead-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Fotoğraf</th>
+                    <th>Marka</th>
+                    <th>Model</th>
+                    <th>Yıl</th>
+                    <th>Günlük Fiyat</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for d in rent_list %}
+                <tr>
+                    <td>{{ d.id }}</td>
+                    <td>
+                        <a href="{{ d.photo }}" target="_blank">Fotoğraf Görüntüle</a>
+                    </td>
+                    <td>{{ d.make }}</td>
+                    <td>{{ d.model }}</td>
+                    <td>{{ d.year }}</td>
+                    <td>{{ d.price_per_day }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <p>Kirası geçen araç bulunmamakta.</p>
+{% endif %}
+
+        </div>
+    </div>
+    
+  
+</div>
+<script>
+    $(document).ready(function () {
+    $(".delete-rental").click(function (event) {
+        event.preventDefault();
+
+     
+        let rentalId = $(this).attr("id")
+        console.log(rentalId)
+
+        $.ajax({
+            type: "DELETE",
+            url: `/api/rental/${rentalId}/`,
+            headers: {
+                "X-CSRFToken": getCookie("csrftoken")
+            },
+            success: function (data) {
+                console.log("Başarıyla silinen kiralama:", data);
+                showSuccessAlert("Başarıyla silindi");
+                setTimeout(function () {
+                  location.href = "/rental/myrents/";
+              }, 1500);
+
+                $(`tr[data-rental-id="${rentalId}"]`).remove();
+            },
+            error: function (error) {
+                console.error("Kiralama silme hatası:", error);
+                showErrorAlert("Kiralama silme hatası");
+            }
+        });
+    });
+
+
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+            var cookies = document.cookie.split(";");
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === name + "=") {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+});
+function showSuccessAlert(message) {
+          Swal.fire({
+              icon: 'success',
+              title: 'Başarılı!',
+              text: message,
+              timer: 2000,
+              showConfirmButton: false,
+          });
+      }
+      
+      function showErrorAlert(message) {
+          Swal.fire({
+              icon: 'error',
+              title: 'Hata!',
+              text: message,
+          });
+      }
+      
+</script>
+{% endblock site-content %}

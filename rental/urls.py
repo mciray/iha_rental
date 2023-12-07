@@ -23,15 +23,31 @@ from django.conf.urls.static import static
 from django.contrib.auth.decorators import login_required
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',Main_Page,name="anasayfa"),
-
-    ## admin 
     path('api/',include('rental_api.urls')), 
 
-    path('accounts/', include('allauth.urls')),
+
+    path('',Main_Page,name="anasayfa"),
+
     path('logout/',logout_view,name="logout"),
     path('login/', login_view, name='login'),
+
+    
+    
+    path('rental/detail/<int:id>/',create_rental_detail,name="create_rental_detail"),
+
+     path('rent/update/<int:id>/',login_required(update_rental),name="update_rental"),
+
+    path('accounts/', include('allauth.urls')),
+  
+
+    path('rental/myrents/',login_required(is_valid_rental_view),name="renteds"),
+
+
     path('Contacts/',login_required(contact),name="contact"),
+
+
+
+    path('ihas/list/',login_required(list_ihas),name="list_ihas"),
   
 
     

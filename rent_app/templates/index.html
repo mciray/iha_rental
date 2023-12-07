@@ -35,16 +35,16 @@
 </div>
 <div class="row mt-5">
   <div class="owl-carousel">
-    {% for car in data %}
+    {% for iha in data %}
     <div class="item">
-      <div class="car-card text-black text-center rounded-4 mb-5" style="min-height: 350px;background-color: #e3f9ff;">
-          <img   width="200px" height="200px" src={{car.photo}} alt={{car.make}} class="car-card-image rounded-top-4">
-          <div class="car-card-body">
-              <h3 class="car-card-title">{{car.make}}</h3>
-              <div class="car-card-availability p-4">
+      <div class="iha-card text-black text-center rounded-4 mb-5" style="min-height: 350px;background-color: #e3f9ff;">
+          <img   width="200px" height="200px" src={{iha.photo}} alt={{iha.make}} class="iha-card-image rounded-top-4">
+          <div class="iha-card-body">
+              <h3 class="iha-card-title">{{iha.make}}</h3>
+              <div class="iha-card-availability p-4">
                   
                     <p><strong>Date:</strong>Available Now</p>
-                    <a href='#'><button class="rent-button btn btn-primary">Rent Now</button></a>
+                    <a href={% url 'create_rental_detail' iha.id %}><button class="rent-button btn btn-primary">Rent Now</button></a>
                  
                     
              

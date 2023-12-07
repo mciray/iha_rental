@@ -52,21 +52,38 @@ class RentalDeleteAPIView(generics.DestroyAPIView):
     queryset = Rental.objects.all()
     serializer_class = RentalSerializer
 
-           
 
 
+class RentalListCreateView(APIView):
+    def post(self, request, *args, **kwargs):
+     
+        serializer = RentalSerializer(data=request.data)
+       
+          
+        if serializer.is_valid():
+        
+            serializer.save() 
+    
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-
-
-
-
+     
+    
 class IhaViewSet(viewsets.ModelViewSet):
     queryset = Iha.objects.all()
     serializer_class = IhaSerializer
 
      
 
+class IhaRentDaysAPIView(APIView):
+    def get(self,request,id,*args,**kwargs):
+        rent=Rental.objects.filter(iha__id=id)
+        rent_serilize=RentalSerializer(rent,many=True)
+        if rent_serilize:
+            return Response(rent_serilize.data,status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'No data found'},status=404)
 
 
 class ContactViewSet(viewsets.ModelViewSet):
@@ -77,3 +94,20 @@ class ContactViewSet(viewsets.ModelViewSet):
 class IhaTypeCreateAPIView(generics.CreateAPIView):
     queryset = Ihatype.objects.all()
     serializer_class =IhaTypeSerializers
+
+
+
+class RentalGetAPIView(APIView):
+    def get(self, request, id, *args, **kwargs):
+        
+        try:
+
+            package = Rental.objects.filter(user__id=id)
+           
+            serializer = RentalSerializer(package,many=True)
+
+            return Response(serializer.data)
+
+        except Exception as e:
+
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
