@@ -43,9 +43,8 @@ class Ihatype(models.Model):
     def __str__(self):
         return f"{self.name}"
 class Iha(models.Model):
-    
     photo=models.ImageField(upload_to="media/",blank=True, null=True)
-    iha_type=models.ForeignKey(Ihatype,on_delete=models.SET_NULL,blank=True, null=True)
+    iha_type=models.ForeignKey(Ihatype,on_delete=models.SET_NULL,blank=True, null=True,related_name="melih")
     brand = models.CharField(max_length=100)
     weight=models.IntegerField(blank=True, null=True)
     model = models.CharField(max_length=100)

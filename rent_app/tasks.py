@@ -7,25 +7,6 @@ from django.core.mail import send_mail
 from django.db import transaction
 import threading
 
-@shared_task
-def has_iha_rented():
-    now = date.today()
-    
-    rents = Rental.objects.all()
-    print("1")
-    for rent in rents:
-        with transaction.atomic():
-            print(rent.return_date)
-            if rent.return_date < now: 
-                
-                print(f"Rent süresi doldu:")
-                print("3")
-               
-                rent.delete()
-    else:
-        print("Süre var")
-
-        return True
 
 @shared_task
 def iha_is_valid():

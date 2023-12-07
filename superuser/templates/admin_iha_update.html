@@ -38,7 +38,7 @@
                     </div>
                     <div class="form-group">
                         <label for="iha_type_id">iha Type</label>
-                        <input type="text" class="form-control" id="iha_type_id" name="iha_type" value="{{ data.iha_type.id }}" required>
+                        <input type="text" class="form-control" id="iha_type" name="iha_type" value="{{ data.iha_type.id }}" required>
                     </div>
                     <div class="form-group">
                         <label for="brand_id">brand</label>
@@ -75,6 +75,7 @@
                 let formData = new FormData(this);
                 let iha_id = "{{ data.id }}"; 
                 
+                
                 $.ajax({
                     type: "PUT",
                     url: `/api/ihas/${iha_id}/`,
@@ -86,13 +87,14 @@
                     },
                     success: function (data) {
                         console.log("Başarıyla güncellendi kiralama:", data);
+                        console.log(formData)
                         showSuccessAlert("Başarıyla güncellendi");
                         setTimeout(function () {
                           location.href = "/superuser/";
                       }, 1500);
         
                         // Remove the corresponding table row from the UI
-                        $(`tr[data-rental-id="${rentalId}"]`).remove();
+                        
                     },
                     error: function (error) {
                         console.error("güncelleme hatası:", error);

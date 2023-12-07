@@ -26,7 +26,7 @@ class IhaSerializer(serializers.ModelSerializer):
     def get_iha_type(self,object):
         iha_serilize=IhaTypeSerializers(object.iha_type)
         return iha_serilize.data
-    
+        
 class IhaTypeSerializers(serializers.ModelSerializer):
     class Meta:
         model = Ihatype

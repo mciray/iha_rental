@@ -43,15 +43,20 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    ## app's
+
+    ## app's ##
     'rent_app',
     'rental_api',
     'superuser',
+
+    ## swagger ##
     'drf_yasg',
+    ## datatable ##
+     'table',
     ## drf
     'rest_framework',
     
-    ## django-allauth setup 
+    ## django-allauth setup ##
     'allauth',
     'allauth.account',
     'allauth.socialaccount',

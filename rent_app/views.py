@@ -21,6 +21,10 @@ def logout_view(request):
     messages.success(request, 'exit successful.')
     return redirect('anasayfa')
 
+
+def test(request):
+    return render(request,"test.html")
+     
 def login_view(request):  
     if not request.user.is_authenticated:
         form = LoginForm(request.POST or None)
@@ -72,10 +76,9 @@ def Main_Page(request):
     
 ## celery ile kontrolünü sağlıyorum seçtiğim süre aralığında 
 @shared_task
-def is_valid_rental_view(request):
+def rental_time_control(request):
     context={}
     id=request.user.id
-    ## user a ait bütün rentalleri getir
     get_rents = f'http://127.0.0.1:8000/api/rental/user/{id}/'
     response = requests.get(get_rents)
     data = response.json()
@@ -88,7 +91,6 @@ def is_valid_rental_view(request):
             iha_id=data['iha']
 
             ## her rent'in içindeki iha'nın bilgilerini getir
-
             get_product = f'http://127.0.0.1:8000/api/ihas/{iha_id}/'
             response = requests.get(get_product)
             product_data = response.json()
@@ -104,7 +106,7 @@ def is_valid_rental_view(request):
                         
                         if product_data not in now_renting_list:
                             now_renting_list.append(product_data)
-                            
+            
             ## eğer vakitleri geçerli değil ise başka bir listeye ekle
             else:
                 if product_data not in rent_list:
@@ -114,7 +116,13 @@ def is_valid_rental_view(request):
         context['now_renting']=now_renting_list
         context['rent_list']=rent_list
        
-       
+        return context
+    else:
+        return False
+
+def is_valid_rental_view(request):
+    context=rental_time_control(request)
+    if context:
         return render(request,"my_rentals.html",context)
     else:
          return render(request,"my_rentals.html")

@@ -1,3 +1,5 @@
+import json
+from django.http import JsonResponse
 from django.shortcuts import render
 from rest_framework import parsers
 # Create your views here.
@@ -12,6 +14,20 @@ from rest_framework import viewsets
 from .models import *
 from .serializers import ContactMessageSerializer,RentalSerializer,IhaSerializer,RentalDetailSerializer,IhaTypeSerializers
 
+from django.core import serializers
+
+def rental_list(request):
+    rentals = Rental.objects.all()
+    data = [{
+        'renter_name': rental.renter_name,
+        'rental_date': rental.rental_date,
+        'return_date': rental.return_date,
+        'iha': str(rental.iha),  # Varsayılan olarak modelin __str__ metodunu kullanır
+        'date_difference': rental.date_difference,
+        'total_price': rental.total_price
+    } for rental in rentals]
+    
+    return JsonResponse({'data': data})
 
 
 
@@ -60,23 +76,18 @@ class RentalListCreateView(APIView):
     def post(self, request, *args, **kwargs):
      
         serializer = RentalSerializer(data=request.data)
-       
-          
         if serializer.is_valid():
-        
             serializer.save() 
-    
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-     
-    
 class IhaViewSet(viewsets.ModelViewSet):
     queryset = Iha.objects.all()
     serializer_class = IhaSerializer
 
      
+    
 
 class IhaRentDaysAPIView(APIView):
     def get(self,request,id,*args,**kwargs):
@@ -103,13 +114,9 @@ class RentalGetAPIView(APIView):
     def get(self, request, id, *args, **kwargs):
         
         try:
-
             package = Rental.objects.filter(user__id=id)
-           
             serializer = RentalSerializer(package,many=True)
-
             return Response(serializer.data)
 
         except Exception as e:
-
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

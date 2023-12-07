@@ -35,7 +35,7 @@ urlpatterns = [
     path('rental/myrents/',login_required(is_valid_rental_view),name="renteds"),
     path('Contacts/',login_required(contact),name="contact"),
     path('ihas/list/',login_required(list_ihas),name="list_ihas"),
-  
+    path('test/',test,name="test"),
  ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

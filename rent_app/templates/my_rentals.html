@@ -6,12 +6,12 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <div class="container mt-5">
     {% if messages %}
-    <ul class="messages bg-danger rounded-4 p-3 w-25 ">
-      {% for message in messages %}
-        <li{% if message.tags %} class="{{ message.tags }} mx-5"{% endif %}>{{ message }}</li>
-      {% endfor %}
-    </ul>
-  {% endif %}
+        <div class="alert alert-danger" role="alert">
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+        </div>
+    {% endif %}
     <div class="row justify-content-center text-center">
     
         <div class="col-md-8">
@@ -19,6 +19,7 @@
                 <div class="card-header">My Rentals</div>
                 <div class="card-body">
                     <table class="table table-striped">
+                        <!-- Tablo başlıkları -->
                         <thead>
                             <tr>
                                 <th>Renter Name</th>
@@ -27,24 +28,26 @@
                                 <th>Car</th>
                                 <th>Kaç günlük tutuldu</th>
                                 <th>Toplam fiyat</th>
+                                <th>İşlemler</th>
                             </tr>
                         </thead>
+                        <!-- Tablo verileri -->
                         <tbody>
-                            
-                     
-                                
                             {% for d in data %}
                             <tr>
                                 <td>{{ d.renter_name }}</td>
                                 <td>{{ d.rental_date }}</td>
                                 <td>{{ d.return_date }}</td>
-                                <td>{{d.iha}}</td>
-                                <td>{{d.date_difference}}</td>
-                                <td>{{d.total_price}}</td>
-            
-                                <td><button id="{{d.id}}" class=" btn btn-danger delete-rental">delete</button></td>
-                                <td><button class=" btn btn-primary update-rental"><a class="text-white " href={% url 'update_rental'  d.id %}>güncelle</a></button></td>
-
+                                <td>{{ d.iha }}</td>
+                                <td>{{ d.date_difference }}</td>
+                                <td>{{ d.total_price }}</td>
+                                <td class="d-flex">
+                                    <!-- İşlem butonları -->
+                                    <button id="{{ d.id }}" class="btn btn-danger delete-rental mx-3">Sil</button>
+                                    <button class="btn btn-primary update-rental">
+                                        <a class="text-white" href="{% url 'update_rental' d.id %}">Güncelle</a>
+                                    </button>
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -144,6 +147,12 @@
     
   
 </div>
+<script>
+    $(document).ready( function () {
+        $('.table').DataTable();
+    });
+    </script>
+    
 <script>
     $(document).ready(function () {
     $(".delete-rental").click(function (event) {
