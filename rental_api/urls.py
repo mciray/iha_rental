@@ -10,6 +10,7 @@ from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
 router.register(r'rental', RentalViewSet)
+router.register(r'iha_type', IhaTypeViewSet)
 router.register(r'ihas', IhaViewSet)
 router.register(r'contact', ContactViewSet)
 

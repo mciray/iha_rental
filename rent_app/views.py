@@ -1,4 +1,5 @@
 from datetime import datetime
+from celery import shared_task
 from django.http import JsonResponse
 from django.shortcuts import render,redirect
 from .forms import CustomUserCreationForm,RentalForm
@@ -69,10 +70,12 @@ def Main_Page(request):
     else:
         return render(request,"index.html")
     
-
+## celery ile kontrolünü sağlıyorum seçtiğim süre aralığında 
+@shared_task
 def is_valid_rental_view(request):
     context={}
     id=request.user.id
+    ## user a ait bütün rentalleri getir
     get_rents = f'http://127.0.0.1:8000/api/rental/user/{id}/'
     response = requests.get(get_rents)
     data = response.json()
@@ -80,11 +83,12 @@ def is_valid_rental_view(request):
     rent_list=[]
     now_renting_list=[]
     if response.status_code == 200:
-    
+        ## user'a ait bütün rentleri döngüye sok
         for data in data:
             iha_id=data['iha']
 
-            
+            ## her rent'in içindeki iha'nın bilgilerini getir
+
             get_product = f'http://127.0.0.1:8000/api/ihas/{iha_id}/'
             response = requests.get(get_product)
             product_data = response.json()
@@ -95,12 +99,13 @@ def is_valid_rental_view(request):
             rental_date = datetime.strptime(rental_date_str, '%Y-%m-%d')
             return_date = datetime.strptime(return_date_str, '%Y-%m-%d')
             now = datetime.now()
+            ## eğer rent başlangıç ve bitiş süresi geçerli ise şu an geçerli olan listeye ekle
             if rental_date < now < return_date:
                         
                         if product_data not in now_renting_list:
                             now_renting_list.append(product_data)
                             
-            
+            ## eğer vakitleri geçerli değil ise başka bir listeye ekle
             else:
                 if product_data not in rent_list:
                             rent_list.append(product_data)
@@ -108,7 +113,6 @@ def is_valid_rental_view(request):
 
         context['now_renting']=now_renting_list
         context['rent_list']=rent_list
-       
        
        
         return render(request,"my_rentals.html",context)

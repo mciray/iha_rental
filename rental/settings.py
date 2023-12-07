@@ -57,9 +57,6 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
 ]
 
-
-
-
 ## for sending mail to user ##
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com' 

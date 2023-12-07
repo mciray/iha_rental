@@ -1,0 +1,124 @@
+
+
+{% extends 'admin_layout.html' %}
+{% block site-title %}
+  
+{% endblock site-title %}
+{% block site-content %}
+<div class="container mt-5">
+    <h1>Contact Messages</h1>
+    <a href="{% url 'home' %}"><button class="btn btn-primary">Go Back</button></a>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>User</th>
+                <th>Name</th>
+                
+                <th>Email</th>
+                <th>Created At</th>
+                
+                <th>Message</th>
+                <th>subject</th>
+                <th>remove</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            {% for message in messages %}
+           
+            <tr>
+                <td><input class="d-none " id="mesaj" type="text" value={{message.id}}></td>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ message.name }}</td>
+                <td>{{ message.email }}</td>
+                <td>{{ message.created_at }}</td>
+             
+               
+                <td>{{ message.subject }}</td>
+                <td>{{ message.message }}</td>
+             
+                <td><button class="btn btn-danger delete-message">remove </button></td>
+               
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        
+        $(".delete-message").click(function (event) {
+            event.preventDefault();
+           
+    
+         
+            let message_id = $(this).closest('tr').find('input').val();
+            console.log(message_id);
+    
+            
+            $.ajax({
+                type: "DELETE",
+                url: `/api/contact/${message_id}/`,
+                headers: {
+                    "X-CSRFToken": getCookie("csrftoken")
+                },
+                success: function (data) {
+                    console.log("Başarıyla silinen kiralama:", data);
+                    showSuccessAlert("Başarıyla silindi");
+                    setTimeout(function () {
+                      location.href = "/superuser/list_contact/";
+                  }, 1500);
+    
+                    // Remove the corresponding table row from the UI
+                    $(`tr[data-rental-id="${rentalId}"]`).remove();
+                },
+                error: function (error) {
+                    console.error("Kiralama silme hatası:", error);
+                    showErrorAlert("Kiralama silme hatası");
+                }
+            });
+        });
+    
+        // Other code...
+    
+        // Function to get CSRF token from cookies
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== "") {
+                var cookies = document.cookie.split(";");
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === name + "=") {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    });
+    function showSuccessAlert(message) {
+              Swal.fire({
+                  icon: 'success',
+                  title: 'Başarılı!',
+                  text: message,
+                  timer: 2000, // 2 saniye sonra otomatik olarak kapanır
+                  showConfirmButton: false,
+              });
+          }
+          
+          function showErrorAlert(message) {
+              Swal.fire({
+                  icon: 'error',
+                  title: 'Hata!',
+                  text: message,
+              });
+          }
+          
+    </script>
+
+      
+
+{% endblock  %}

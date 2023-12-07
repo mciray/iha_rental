@@ -5,5 +5,5 @@ from django import forms
 class IhaFilter(django_filters.FilterSet):
     class Meta:
         model=Iha
-        fields=['iha_type']
+        fields=['iha_type','brand',]
       

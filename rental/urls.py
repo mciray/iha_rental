@@ -26,33 +26,16 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/',include('rental_api.urls')), 
     path('superuser/',include('superuser.urls')), 
-
-
     path('',Main_Page,name="anasayfa"),
-
     path('logout/',logout_view,name="logout"),
     path('login/', login_view, name='login'),
-
-    
-    
     path('rental/detail/<int:id>/',create_rental_detail,name="create_rental_detail"),
-
-     path('rent/update/<int:id>/',login_required(update_rental),name="update_rental"),
-
+    path('rent/update/<int:id>/',login_required(update_rental),name="update_rental"),
     path('accounts/', include('allauth.urls')),
-  
-
     path('rental/myrents/',login_required(is_valid_rental_view),name="renteds"),
-
-
     path('Contacts/',login_required(contact),name="contact"),
-
-
-
     path('ihas/list/',login_required(list_ihas),name="list_ihas"),
   
-
-    
  ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

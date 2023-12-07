@@ -1,20 +1,27 @@
 {% extends 'admin_layout.html' %}
 {% block site-title %}
-Admin create  iha
+Admin Panel - User Activity Graph
 {% endblock site-title %}
 {% block site-content %}
 <div class="container">
 <div class="row justify-content-center">
-    <div class="col-md-6 text-center">
+    <div class="div d-flex" style="margin-top: 100px;">
+        <a href={% url 'home' %}><div class="btn btn-primary p-3">geri git</div></a>
 
+    </div>
+    <div class="col-md-6 text-center">
+       
         <form method="post"  enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>
+   
 
 </div>
+
+
 </div>
 
 <script>
@@ -54,7 +61,7 @@ Admin create  iha
               showSuccessAlert("Başarıyla oluşturuldu");
               
               setTimeout(function () {
-                  location.href = "/superuser/";
+                  location.href = "/superuser/index/";
               }, 2000);
           },
           error: function (error) {

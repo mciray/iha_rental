@@ -24,7 +24,9 @@ class ContactAPIView(APIView):
         serializer=ContactMessageSerializer(contacts,many=True)
         return Response(serializer.data)
 
-
+class IhaTypeViewSet(viewsets.ModelViewSet):
+    queryset = Ihatype.objects.all()
+    serializer_class = IhaTypeSerializers
 
 class RentalViewSet(viewsets.ModelViewSet):
     queryset = Rental.objects.all()

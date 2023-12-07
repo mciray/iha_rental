@@ -62,14 +62,14 @@ Admin Panel - User Activity Graph
                         <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">oluştur</a>
                         <ul class="collapse list-unstyled" id="homeSubmenu">
                             <li>
-                                <a href={% url 'admin_create_iha' %}>iha oluştur</a>
+                                <a href={% url 'create_iha' %}>iha oluştur</a>
                             </li>
                          
                             <li>
-                                <a href='#'>rentals</a>
+                                <a href={% url 'admin_rental_list' %}>rentals</a>
                             </li>
                             <li>
-                                <a href='#'>Araç listesi</a>
+                                <a href={% url 'admin_ihas_list' %}>Araç listesi</a>
                             </li>
                             
                             <li>
@@ -79,7 +79,7 @@ Admin Panel - User Activity Graph
                         </ul>
                     </li>
                     <li>
-                        <a href='#'>Contact</a>
+                        <a href={% url 'admin_contact_list' %}>Contact</a>
                     </li>
                 </ul>
             </div>
@@ -95,7 +95,7 @@ Admin Panel - User Activity Graph
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            fetch('{% url "user_activity_data" %}')  // Use the Django URL tag to get the correct URL
+            fetch('{% url "user_activity_data" %}' )  
                 .then(response => response.json())
                 .then(data => {
                     const ctx = document.getElementById('userActivityGraph').getContext('2d');

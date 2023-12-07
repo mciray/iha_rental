@@ -11,7 +11,7 @@
     {% endfor %}
   </ul>
 {% endif %}
-
+<a href={% url 'home' %}><div class="btn btn-primary p-3">geri git</div></a>
     <input id="data_id" class="d-none" type="text" value={{data.id}}>
     <input id="user_id" class="d-none" type="text" value={{data.user}}>
       <h1>Update Rentals!</h1>
@@ -51,23 +51,23 @@
   <script>
     $(document).ready(function () {
       let iha_id = '{{ data.iha.id }}'
-      let user= "{{request.user.username}}"
+      let user= "{{data.user.username}}"
+      console.log(user)
       $.ajax({
           type: "GET",
           url: `http://127.0.0.1:8000/api/rental/dates/${iha_id}/`,
           success: function(data) {
-            console.log(data)
-            
-            
+        
             const disabledDates = data
             .filter(item =>item.renter_name != user )
+            
             .map(item => {
                 return {
                     from: item.rental_date,
                     to: item.return_date
                 };
             });
-      
+            
         console.log(user)
         const defaultDate = data
             .find(item => item.renter_name === user )
@@ -80,10 +80,11 @@
               allowInput: true,
               altFormat: "F j, Y",
               defaultDate:[start_date,end_date],
-              disable:disabledDates
+              disabled:disabledDates,
+              
              
           });
-          console.log()
+          console.log(disabledDates,start_date,end_date)
         },
           error: function (error) {
              console.log("error") 

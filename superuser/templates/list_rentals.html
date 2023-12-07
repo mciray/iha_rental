@@ -1,0 +1,130 @@
+{% extends 'admin_layout.html' %}
+{% load static %}
+
+{% block site-title %}
+  
+{% endblock site-title %}
+{% block site-content %}
+   
+<div class="row justify-content-center text-center m-0">
+      <h1>all Rental</h1>
+    <div class="col-md-7">
+       
+        <div class="card">
+            <div class="card-header">My Rentals</div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Renter Name</th>
+                            <th>Rental Date</th>
+                            <th>Return Date</th>
+                            <th>iha</th>
+                            <th>Kaç günlük tutuldu</th>
+                            <th>Toplam fiyat</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                    
+                        {% for d in all_rents %}
+                        <tr>
+                            <td>{{ d.renter_name }}</td>
+                            <td>{{ d.rental_date }}</td>
+                            <td>{{ d.return_date }}</td>
+                            <td>{{d.iha.id}}</td>
+
+                            <td>{{d.date_difference}}</td>
+                            <td>{{d.total_price}}</td>
+                            <td>{{d.id}}</td>
+                            <td><button id="{{d.id}}" class=" btn btn-danger delete-rental">delete</button></td>
+                            <td><button class=" btn btn-primary"><a class="text-white " href={% url 'admin_rental_update'  d.id %}>güncelle</a></button></td>
+
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="div text-center" style="width: 300px;">
+
+    <a href={% url 'home' %}><div class="btn btn-primary p-3">geri git</div></a>
+</div>
+<script>
+    $(document).ready(function () {
+    // Add an event listener for the delete links
+    $(".delete-rental").click(function (event) {
+        event.preventDefault();
+
+     
+        let rentalId = $(this).attr("id")
+        console.log(rentalId)
+
+        // AJAX delete request
+        $.ajax({
+            type: "DELETE",
+            url: `/api/rental/${rentalId}/`,
+            headers: {
+                "X-CSRFToken": getCookie("csrftoken")
+            },
+            success: function (data) {
+                console.log("Başarıyla silinen kiralama:", data);
+                showSuccessAlert("Başarıyla silindi");
+                setTimeout(function () {
+                  location.href = "/superuser/";
+              }, 1500);
+
+                // Remove the corresponding table row from the UI
+                $(`tr[data-rental-id="${rentalId}"]`).remove();
+            },
+            error: function (error) {
+                console.error("Kiralama silme hatası:", error);
+                showErrorAlert("Kiralama silme hatası");
+            }
+        });
+    });
+
+    // Other code...
+
+    // Function to get CSRF token from cookies
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+            var cookies = document.cookie.split(";");
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === name + "=") {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+});
+function showSuccessAlert(message) {
+          Swal.fire({
+              icon: 'success',
+              title: 'Başarılı!',
+              text: message,
+              timer: 2000, // 2 saniye sonra otomatik olarak kapanır
+              showConfirmButton: false,
+          });
+      }
+      
+      function showErrorAlert(message) {
+          Swal.fire({
+              icon: 'error',
+              title: 'Hata!',
+              text: message,
+          });
+      }
+      
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+{% endblock  %}

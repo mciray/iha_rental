@@ -63,15 +63,31 @@
   .rent-button {
     width: 100%;
   }
+  input[type="text"]{
+    width: 50%; 
+    padding: 12px; 
+    margin: 8px 0; 
+    border: 1px solid #ccc; 
+    border-radius: 4px; 
+
+    }
+    select {
+        width: 50%;
+        padding: 12px; 
+        margin: 8px 0; 
+        border: 1px solid #ccc;
+        border-radius: 4px; 
+
+    }
 </style>
 
 <div class="container  bg_image h-full">
   <h3><a href='#'>Kategori</a></h3>
   <div class="select-content gap-5 justify-content-center d-flex text-center d-flex mb-4">
 
-    <form action="{% url 'list_ihas' %}" method="get">
+    <form class="d-flex" action="{% url 'list_ihas' %}" method="get">
         {{form.as_p}}
-      <input type="submit" value="submit" class="btn btn-primary">
+      <input type="submit" value="submit" class="btn btn-primary " >
     </form>
   </div>
 
