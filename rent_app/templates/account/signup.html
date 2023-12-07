@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+{% load static  i18n %}
+{% block site-title %}sign up - Your Site{% endblock %}
+
+{% block site-content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-4 ">
+            <div class="card ">
+                <div class="card-header ">
+                    <h3>Register</h3>
+                </div>
+                <div class="card-body justify-content-center">
+                    <ul class="errorlist">
+                        {% for key, value in form.errors.items %}
+                            <li>{% if key != '__all__' %}{{ key }} {% endif %}{{ value }}</li>
+                        {% endfor %}
+                        </ul>
+                    <form class="signup text-center" id="signup_form" method="post" action="{% url 'account_signup' %}">
+                      
+                        {% csrf_token %}
+                        <div class="m-auto w-50 text-center form-group mt-2">
+                            <label for="{{ form.username.id_for_label }}">{{ form.username.label_tag }}</label>
+                            {{ form.username }}
+                        </div>
+                        <div class="m-auto w-50 form-group mt-2">
+                            <label for="{{ form.email.id_for_label }}">{{ form.email.label_tag }}</label>
+                            {{ form.email }}
+                        </div>
+                        <div class="m-auto w-50 form-group mt-2">
+                            <label for="{{ form.password1.id_for_label }}">{{ form.password1.label_tag }}</label>
+                            {{ form.password1 }}
+                        </div>
+                        <div class="m-auto w-50 form-group mt-2">
+                            <label for="{{ form.password2.id_for_label }}">{{ form.password2.label_tag }}</label>
+                            {{ form.password2 }}
+                        </div>
+                        <div class="mt-5 d-flex justify-content-center">
+                            {{form.captcha}}
+                        </div>
+                       
+                        {% if redirect_field_value %}
+                        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                        {% endif %}
+                        <button class="btn btn-primary" type="submit">{% trans "Sign Up" %} &raquo;</button>
+                      </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
+{% endblock %}
