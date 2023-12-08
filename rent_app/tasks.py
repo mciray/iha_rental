@@ -1,5 +1,7 @@
+import json
 import random
 from django.core.mail import EmailMessage
+from rent_app.views import get_cached_iha
 from rental_api.models import *
 from datetime import date, datetime
 from rental.settings import *
@@ -7,6 +9,8 @@ from celery import shared_task
 from django.core.mail import send_mail
 from django.db import transaction
 import threading
+from decimal import Decimal
+from django.core.cache import cache
 
 ## bu fonksiyonum siteye kayıtlı her kullanıcıya listemizdeki iha'ları mail atıyor ve sitemize giriş yapmasını sağlıyoruz.
 
@@ -67,3 +71,38 @@ def async_send_rental_email(iha_id, rental_date, return_date, email_to):
 
     thread = threading.Thread(target=send_email, args=(product,subject, message, email_to))
     thread.start()
+
+
+
+@shared_task
+def apply_discount():
+    # Rastgele bir Iha nesnesi seç
+    iha = random.choice(Iha.objects.all())
+    
+    # İndirim miktarını hesapla (örneğin %10 indirim)
+    discount_percentage = Decimal('10.0')
+    original_price = iha.price_per_day
+    discounted_price = original_price * (1 - discount_percentage / Decimal('100'))
+
+    # İndirimli fiyatı uygula
+    iha.price_per_day = discounted_price
+    iha.save()
+    data_to_cache = json.dumps({
+        "original_price": str(original_price),
+        "discounted_price": str(discounted_price),
+        "valid_until": (datetime.now() + timedelta(seconds=30)).isoformat()
+    })
+
+    # JSON verisini Redis'e kaydet
+    cache.set(f"discounted_iha{iha.id}", data_to_cache, timeout=30)
+    get_cached_iha(iha.id)
+    # Belirli bir süre sonra eski fiyatına döndürmek için zamanlanmış görevi başlat
+    revert_discount.apply_async((iha.id, original_price), eta=timezone.now() + timedelta(seconds=30))
+
+@shared_task
+def revert_discount(iha_id, original_price):
+    # İndirim süresi dolduktan sonra eski fiyatını geri yükle
+    iha = Iha.objects.get(id=iha_id)
+    iha.price_per_day = original_price
+    iha.save()
+    return "Fiyat eskiye çevrildi."

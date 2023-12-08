@@ -1,4 +1,6 @@
 from datetime import datetime
+import json
+from django.http import JsonResponse
 from django.shortcuts import render,redirect
 from .forms import CustomUserCreationForm,RentalForm
 from rental_api.models import *
@@ -6,10 +8,14 @@ import requests
 from django.contrib import messages
 from django.contrib.auth import login,logout
 from .forms import LoginForm
-from django.contrib.auth.signals import user_logged_in
-from django.db.models.signals import post_save
 from rental_api.filters import IhaFilter
+from django.core.cache import cache
 
+
+   
+    
+ 
+    
 
 
 ## user işlemleri ##
@@ -61,17 +67,37 @@ def list_ihas(request):
         'ihas': ihas,  
     }
     return render(request, "list_ihas.html", context)
+def get_cached_iha(iha_id):
+    discounted_iha=Iha.objects.filter(id=iha_id).first()
+    cached_data = cache.get("discounted_iha")
+    cached_data = json.loads(cached_data)
+    original_price = cached_data.get("original_price")
+    discounted_price = cached_data.get("discounted_price")
+    valid_until = cached_data.get("valid_until")
+    valid_until_datetime = datetime.fromisoformat(valid_until)
 
+# Saati de içeren, ancak 'T' harfi olmayan bir format oluştur
+    valid_until_formatted = valid_until_datetime.strftime("%Y-%m-%d %H:%M")
+    
+    
+    new_data = {
+        "discounted_iha":discounted_iha,
+        "original_price":original_price,
+        "discounted_price":discounted_price,
+        "valid_until":valid_until_formatted,
+    }
+    return new_data
 def Main_Page(request):
+    new_data=get_cached_iha()
     get_products_url=f'http://127.0.0.1:8000/api/ihas/'
     response = requests.get(get_products_url)
     if response.status_code == 200:
         data = response.json()
-        return render(request,"index.html",{'data':data,})
+        return render(request,"index.html",{'data':data,'cached_data':new_data,})
     else:
         return render(request,"index.html")
-    
-## celery ile kontrolünü sağlıyorum seçtiğim süre aralığında 
+
+
 
 def rental_time_control(request):
     print("ÇALIŞTIM ÇALIŞTIM ")

@@ -20,7 +20,11 @@ app.conf.update(timezone='Europe/Istanbul')
 app.conf.beat_schedule = {
     'send_mail_to_valid_cars': {
         'task': 'rent_app.tasks.iha_is_valid',
-        'schedule': timedelta(seconds=15),
+        'schedule': timedelta(hours=12),
+    },
+    'make_discount_for_iha': {
+        'task': 'rent_app.tasks.apply_discount',
+        'schedule': timedelta(seconds=30),
     },
     
 }

@@ -4,6 +4,27 @@
   
 {% endblock site-title %}
 {% block site-content %}
+<style>
+  .discounted-item {
+      background-color: #ffdddd; /* Açık kırmızı arkaplan */
+      border: 1px solid #ff5555; /* Koyu kırmızı kenarlık */
+      border-radius: 5px; /* Kenarları yuvarlat */
+      padding: 20px; /* İç boşluk */
+      margin-top: 20px; /* Üstten boşluk */
+  }
+  .discounted-item h5 {
+      color: #cc0000; /* Başlık rengi */
+  }
+  .price {
+      text-decoration: line-through; /* Orijinal fiyat üzeri çizili */
+      color: #777; /* Gri renk */
+  }
+  .discounted-price {
+      font-weight: bold; /* İndirimli fiyat kalın yazı */
+      color: #cc0000; /* Kırmızı renk */
+  }
+</style>
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
 
@@ -18,7 +39,7 @@
   </ul>
 {% endif %}
 <div class="row justify-content-between">
-    <div class="col-md-6  "style="height: calc(100vh - 56px - 48px - 48px  - 574px );">
+    <div class="col-md-5  "style="height: calc(100vh - 56px - 48px - 48px  - 574px );">
         <h3>Header</h3>
         <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Laudantium sit expedita culpa iste numquam nemo similique ipsum quas. Corrupti dolorum necessitatibus fugiat velit odio consequatur ullam eaque cupiditate, sunt laudantium delectus laborum asperiores animi distinctio quam accusamus nemo, dolore at omnis tempore atque neque, voluptatibus ipsum autem. Odit, quasi illum?</p>
 
@@ -31,6 +52,16 @@
         
         <a href="{% url 'contact' %}"><button class="btn btn-primary">iletişime geç!</button></a>
     </div>
+    <div class="col-md-5">
+      <div class="discounted-item">
+        <h5>İndirimli Ürün!</h5>
+        <p>{{discounted_iha.brand}}</p>
+        <p>Orijinal Fiyat: <span class="price">{{cached_data.original_price}}</span></p>
+        <p>İndirimli Fiyat: <span class="discounted-price">{{cached_data.discounted_price}}</span></p>
+        <p>İndirim Bitiş Tarihi: {{cached_data.valid_until}}</p>
+    </div>
+    </div>
+
     
 </div>
 <div class="row mt-5">
