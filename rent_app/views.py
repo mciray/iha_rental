@@ -1,6 +1,4 @@
 from datetime import datetime
-from celery import shared_task
-from django.http import JsonResponse
 from django.shortcuts import render,redirect
 from .forms import CustomUserCreationForm,RentalForm
 from rental_api.models import *
@@ -22,8 +20,7 @@ def logout_view(request):
     return redirect('anasayfa')
 
 
-def test(request):
-    return render(request,"test.html")
+
      
 def login_view(request):  
     if not request.user.is_authenticated:
@@ -75,8 +72,9 @@ def Main_Page(request):
         return render(request,"index.html")
     
 ## celery ile kontrolünü sağlıyorum seçtiğim süre aralığında 
-@shared_task
+
 def rental_time_control(request):
+    print("ÇALIŞTIM ÇALIŞTIM ")
     context={}
     id=request.user.id
     get_rents = f'http://127.0.0.1:8000/api/rental/user/{id}/'
@@ -124,8 +122,8 @@ def is_valid_rental_view(request):
     context=rental_time_control(request)
     if context:
         return render(request,"my_rentals.html",context)
-    else:
-         return render(request,"my_rentals.html")
+  
+    return render(request,"my_rentals.html")
     
 def update_rental(request, id):
     

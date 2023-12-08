@@ -20,12 +20,9 @@ app.conf.update(timezone='Europe/Istanbul')
 app.conf.beat_schedule = {
     'send_mail_to_valid_cars': {
         'task': 'rent_app.tasks.iha_is_valid',
-        'schedule': timedelta(hours=6),
+        'schedule': timedelta(seconds=15),
     },
-    'my-scheduled-task-every-15-minutes': {
-        'task': 'rent_app.views.rental_time_control',
-        'schedule': timedelta(minutes=15),
-    },
+    
 }
 
 app.autodiscover_tasks()

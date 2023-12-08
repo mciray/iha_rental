@@ -1,3 +1,4 @@
+import random
 from django.core.mail import EmailMessage
 from rental_api.models import *
 from datetime import date, datetime
@@ -7,21 +8,18 @@ from django.core.mail import send_mail
 from django.db import transaction
 import threading
 
+## bu fonksiyonum siteye kayıtlı her kullanıcıya listemizdeki iha'ları mail atıyor ve sitemize giriş yapmasını sağlıyoruz.
 
 @shared_task
 def iha_is_valid():
     users = User.objects.all()
-    ihas = Iha.objects.filter(is_active=True)
-
+    ihas = Iha.objects.all()
     if not ihas.exists():
         return "Aktif iha bulunamadı."
-
     # İHA bilgilerini bir listeye dönüştürme
     iha_list = [f"{iha.brand} marka {iha.model} model, günlük fiyat: {iha.price_per_day} TL" for iha in ihas]
-
     # İHA listesini string olarak birleştirme
     iha_string = "\n".join(iha_list)
-
     for user in users:
         subject = f'Sayın {user.first_name}, kiralık araçlarımız var!'
         body = f"Sizin için kiralık araçlarımız var:\n{iha_string}"
@@ -43,8 +41,10 @@ def iha_is_valid():
 
     return "E-postalar gönderildi."
 
-
-    
+## async_send_rental_email'ten sonra çalışır.
+## bu işlem düz bir mail atma işlemi django send mail methodunu kullanmak yerine EmailMessage kullandım çünkü iletimde fotoğraf olmasını istedim.
+## send mail'de ileti içerisine fotoğraf koyamıyoruz.
+## burada gerekli parametreleri kaydettikten sonra içerisine iha'nın fotoğrafını da ekledikten sonra email send ediyoruz.
 def send_email(product,subject, message, email_to):
     email = EmailMessage(
         subject=subject,
@@ -57,6 +57,9 @@ def send_email(product,subject, message, email_to):
                 email.attach_file(product.photo.path)
     email.send(fail_silently=False)
 
+## bu fonksiyonum asenkron bir mail atma fonksiyonudur.
+## bu fonksiyonda mailimin içeriğini belirleyip send email fonksiyonuma yönlendiriyorum gerekli parametreler ile birlikte 
+## gönderirken bu işlemin ayrı bir thread(iş parçası) ile iş yapmasını söylüyorum bu işlem asenkron çalışır ve kullanıcı bu işlemler esnasında bekletilmez.
 def async_send_rental_email(iha_id, rental_date, return_date, email_to):
     product = Iha.objects.get(id=iha_id)
     subject = f"Kiralama İşlemi Başarılı"

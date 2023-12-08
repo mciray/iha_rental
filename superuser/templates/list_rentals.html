@@ -7,51 +7,57 @@
 {% block site-content %}
    
 <div class="row justify-content-center text-center m-0">
-      <h1>all Rental</h1>
+    <h1 class="text-white">Bütün Kiralamalar</h1>
     <div class="col-md-7">
-       
         <div class="card">
             <div class="card-header">My Rentals</div>
             <div class="card-body">
-                <table class="table table-striped">
+                <table id="rentalsTable" class="table table-striped">
                     <thead>
                         <tr>
                             <th>Renter Name</th>
                             <th>Rental Date</th>
                             <th>Return Date</th>
-                            <th>iha</th>
-                            <th>Kaç günlük tutuldu</th>
-                            <th>Toplam fiyat</th>
+                            <th>IHA</th>
+                            <th>Kaç Günlük Tutuldu</th>
+                            <th>Toplam Fiyat</th>
+                            <th>#</th>
+                            <th>Delete</th>
+                            <th>Update</th>
                         </tr>
                     </thead>
                     <tbody>
-                        
-                    
                         {% for d in all_rents %}
                         <tr>
                             <td>{{ d.renter_name }}</td>
                             <td>{{ d.rental_date }}</td>
                             <td>{{ d.return_date }}</td>
-                            <td>{{d.iha.id}}</td>
-
-                            <td>{{d.date_difference}}</td>
-                            <td>{{d.total_price}}</td>
-                            <td>{{d.id}}</td>
-                            <td><button id="{{d.id}}" class=" btn btn-danger delete-rental">delete</button></td>
-                            <td><button class=" btn btn-primary"><a class="text-white " href={% url 'admin_rental_update'  d.id %}>güncelle</a></button></td>
-
+                            <td>{{ d.iha.id }}</td>
+                            <td>{{ d.date_difference }}</td>
+                            <td>{{ d.total_price }}</td>
+                            <td>{{ d.id }}</td>
+                            <td><button id="{{ d.id }}" class="btn btn-danger delete-rental">Delete</button></td>
+                            <td><button class="btn btn-primary"><a class="text-white" href="{% url 'admin_rental_update' d.id %}">Update</a></button></td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
         </div>
+        <a href={% url 'home' %}><button class="btn btn-primary"> go back</button></a>
     </div>
 </div>
-<div class="div text-center" style="width: 300px;">
 
-    <a href={% url 'home' %}><div class="btn btn-primary p-3">geri git</div></a>
-</div>
+<!-- DataTables CSS ve jQuery -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.css">
+<script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $('#rentalsTable').DataTable();
+    });
+</script>
 <script>
     $(document).ready(function () {
     // Add an event listener for the delete links
@@ -73,7 +79,7 @@
                 console.log("Başarıyla silinen kiralama:", data);
                 showSuccessAlert("Başarıyla silindi");
                 setTimeout(function () {
-                  location.href = "/superuser/";
+                  location.href = "/superuser/list_rentals/";
               }, 1500);
 
                 // Remove the corresponding table row from the UI

@@ -9,6 +9,10 @@ from rent_app.forms import *
 from superuser.forms import IhaForm
 from django.db.models import Count
 from pprint import pprint
+from datetime import datetime
+from django.utils.dateparse import parse_datetime
+from django_serverside_datatable.views import ServerSideDatatableView
+
 
 @user_passes_test(lambda u: u.is_superuser, login_url='anasayfa')
 def list_ihas_admin(request):
@@ -73,6 +77,11 @@ def list_contact_admin(request):
     if not response.status_code==200:
         redirect('admin_index')
     messages=response.json()
+    for message in messages:
+        created_at_datetime = datetime.fromisoformat(message['created_at'].rstrip('Z'))
+        adjusted_datetime = created_at_datetime + timedelta(hours=3)
+        message['created_at']=adjusted_datetime.strftime("%Y-%m-%d %H:%M")
+   
     return render(request,"admin_contact.html",{'messages':messages,})
 
 @user_passes_test(lambda u: u.is_superuser, login_url='anasayfa')

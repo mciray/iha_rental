@@ -12,7 +12,7 @@ from .models import ContactMessage
 from rest_framework import generics
 from rest_framework import viewsets
 from .models import *
-from .serializers import ContactMessageSerializer,RentalSerializer,IhaSerializer,RentalDetailSerializer,IhaTypeSerializers
+from .serializers import ContactMessageSerializer,RentalSerializer,IhaSerializer,RentalDetailSerializer,IhaTypeSerializers,IhaWithTypeSerializer
 
 from django.core import serializers
 
@@ -84,11 +84,10 @@ class RentalListCreateView(APIView):
 
 class IhaViewSet(viewsets.ModelViewSet):
     queryset = Iha.objects.all()
-    serializer_class = IhaSerializer
+    serializer_class = IhaWithTypeSerializer
 
      
     
-
 class IhaRentDaysAPIView(APIView):
     def get(self,request,id,*args,**kwargs):
         rent=Rental.objects.filter(iha__id=id)

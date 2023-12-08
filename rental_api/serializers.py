@@ -26,6 +26,13 @@ class IhaSerializer(serializers.ModelSerializer):
     def get_iha_type(self,object):
         iha_serilize=IhaTypeSerializers(object.iha_type)
         return iha_serilize.data
+    
+class IhaWithTypeSerializer(serializers.ModelSerializer):
+ 
+    class Meta:
+        model = Iha
+        fields = '__all__'
+   
         
 class IhaTypeSerializers(serializers.ModelSerializer):
     class Meta:

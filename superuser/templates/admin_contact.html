@@ -1,50 +1,50 @@
-
-
 {% extends 'admin_layout.html' %}
 {% block site-title %}
-  
+  Contacts
 {% endblock site-title %}
 {% block site-content %}
+
 <div class="container mt-5">
     <h1>Contact Messages</h1>
     <a href="{% url 'home' %}"><button class="btn btn-primary">Go Back</button></a>
-    <table class="table table-bordered">
+    <table id="contactTable" class="table table-bordered">
         <thead>
             <tr>
                 <th>#</th>
                 <th>User</th>
                 <th>Name</th>
-                
                 <th>Email</th>
                 <th>Created At</th>
-                
                 <th>Message</th>
-                <th>subject</th>
-                <th>remove</th>
-
+                <th>Subject</th>
+                <th>Remove</th>
             </tr>
         </thead>
         <tbody>
             {% for message in messages %}
-           
             <tr>
                 <td><input class="d-none " id="mesaj" type="text" value={{message.id}}></td>
                 <td>{{ forloop.counter }}</td>
                 <td>{{ message.name }}</td>
                 <td>{{ message.email }}</td>
                 <td>{{ message.created_at }}</td>
-             
-               
                 <td>{{ message.subject }}</td>
                 <td>{{ message.message }}</td>
-             
-                <td><button class="btn btn-danger delete-message">remove </button></td>
-               
+                <td><button class="btn btn-danger delete-message">Remove</button></td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+
+<!-- DataTables CSS ve jQuery -->
+
+
+<script>
+    $(document).ready( function () {
+        $('#contactTable').DataTable();
+    });
+</script>
 
 <script>
     $(document).ready(function () {
