@@ -20,9 +20,9 @@ def iha_is_valid():
     ihas = Iha.objects.all()
     if not ihas.exists():
         return "Aktif iha bulunamadı."
-    # İHA bilgilerini bir listeye dönüştürme
+ 
     iha_list = [f"{iha.brand} marka {iha.model} model, günlük fiyat: {iha.price_per_day} TL" for iha in ihas]
-    # İHA listesini string olarak birleştirme
+  
     iha_string = "\n".join(iha_list)
     for user in users:
         subject = f'Sayın {user.first_name}, kiralık araçlarımız var!'

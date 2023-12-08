@@ -48,20 +48,20 @@
       <div class="card-body">
         <h2>{{iha.brand}}</h2>
         <p>
-          At Mel-Car Rentals, we offer a wide range of high-quality vehicles for rent. Whether you need a compact car for a quick city trip or a spacious SUV for a family vacation, we have the perfect car for you.
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel eaque debitis consequuntur quos repellat sint natus architecto qui molestiae nesciunt voluptatum suscipit itaque maxime recusandae hic odit accusantium, amet similique iste eum et numquam quaerat necessitatibus! Neque dolor quo velit a, dolorem quibusdam accusantium officia earum soluta eligendi dolores illo ea tempora molestiae quidem in dolore numquam pariatur laudantium corrupti!
         </p>
         <h2>Why Choose Us?</h2>
         <input type="text" hidden name="" id="iha_id" value="{{iha.id}}">
         <ul>
-            <li id="ihaId"></li>
+            <li hidden id="ihaId"></li>
             <li id="ihaModel"></li>
             <li id="ihaWeight"></li>
             <li id="ihaYear"></li>
             <li id="ihaPricePerDay"></li>
-            <li id="ihaTypeName"></li>
+           
         </ul>
         <div class="photo text-center">
-            <img id="ihaPhoto" src="" alt="IHA Photo">
+            <img id="ihaPhoto" src="" height="250px" alt="IHA Photo">
         </div>
         
         <a href='#' class="btn btn-primary d-block mx-auto my-3">Back to List of Cars</a>
@@ -146,10 +146,10 @@
         success: function (data) {
             $('#option_value').val(data.id).text(data.model);
             $('#ihaId').text(data.id);
-            $('#ihaModel').text(data.model);
-            $('#ihaWeight').text(data.weight);
-            $('#ihaYear').text(data.year);
-            $('#ihaPricePerDay').text(data.price_per_day);
+            $('#ihaModel').text("Model Adı "+data.model);
+            $('#ihaWeight').text(data.weight + " kg");
+            $('#ihaYear').text("Model yılı "+data.year);
+            $('#ihaPricePerDay').text("Günlük fiyatı "+data.price_per_day);
             $('#ihaTypeName').text(data.iha_type.name);
             $('#ihaPhoto').attr('src', data.photo);
         },

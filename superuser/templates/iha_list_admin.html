@@ -18,8 +18,8 @@
             <div class="iha-card text-black text-center rounded-4 p-4 mb-5" style="min-height: 350px;">
               <img src="{{ iha.photo }}" width="100%" height="200px" alt="{{ iha.brand }}" class="iha-card-image">
               <div class="iha-card-body">
-                <h3 class="iha-card-title">{{ iha.brand }}</h3>
-                <p class="iha-card-rating">{{ iha.model }}</p>
+                <h3 class="iha-card-rating">{{ iha.model }}</h3>
+                <h5 class="iha-card-title">{{ iha.brand }}</h5>
                 <p class="iha-card-price">{{ iha.price_per_day }} TL</p>
                 <p class="iha-card-description">
                   Aerodynamic design, ready to hit the streets. Rent and get the new admiration from around.
@@ -68,7 +68,7 @@
                 console.log("Başarıyla silinen kiralama:", data);
                 showSuccessAlert("Başarıyla silindi");
                 setTimeout(function () {
-                  location.href = "/superuser/";
+                  location.href = "/superuser/list_ihas/";
               }, 1500);
 
                
