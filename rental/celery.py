@@ -22,11 +22,6 @@ app.conf.beat_schedule = {
         'task': 'rent_app.tasks.iha_is_valid',
         'schedule': timedelta(hours=12),
     },
-    'make_discount_for_iha': {
-        'task': 'rent_app.tasks.apply_discount',
-        'schedule': timedelta(seconds=30),
-    },
-    
 }
 
 app.autodiscover_tasks()

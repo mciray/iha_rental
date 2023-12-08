@@ -67,40 +67,24 @@ def list_ihas(request):
         'ihas': ihas,  
     }
     return render(request, "list_ihas.html", context)
-def get_cached_iha(iha_id):
-    discounted_iha=Iha.objects.filter(id=iha_id).first()
-    cached_data = cache.get("discounted_iha")
-    cached_data = json.loads(cached_data)
-    original_price = cached_data.get("original_price")
-    discounted_price = cached_data.get("discounted_price")
-    valid_until = cached_data.get("valid_until")
-    valid_until_datetime = datetime.fromisoformat(valid_until)
 
-# Saati de içeren, ancak 'T' harfi olmayan bir format oluştur
-    valid_until_formatted = valid_until_datetime.strftime("%Y-%m-%d %H:%M")
-    
-    
-    new_data = {
-        "discounted_iha":discounted_iha,
-        "original_price":original_price,
-        "discounted_price":discounted_price,
-        "valid_until":valid_until_formatted,
-    }
-    return new_data
-def Main_Page(request):
-    new_data=get_cached_iha()
-    get_products_url=f'http://127.0.0.1:8000/api/ihas/'
+def get_products():
+    get_products_url = f'http://127.0.0.1:8000/api/ihas/'
     response = requests.get(get_products_url)
     if response.status_code == 200:
         data = response.json()
-        return render(request,"index.html",{'data':data,'cached_data':new_data,})
+        return data
     else:
-        return render(request,"index.html")
+        return None
+
+def Main_Page(request):
+    data = get_products()
+    return render(request, "index.html", {'data': data, })
 
 
 
 def rental_time_control(request):
-    print("ÇALIŞTIM ÇALIŞTIM ")
+    
     context={}
     id=request.user.id
     get_rents = f'http://127.0.0.1:8000/api/rental/user/{id}/'

@@ -5,12 +5,14 @@
 {% endblock site-title %}
 {% block site-content %}
 <style>
+  
   .discounted-item {
-      background-color: #ffdddd; /* Açık kırmızı arkaplan */
-      border: 1px solid #ff5555; /* Koyu kırmızı kenarlık */
-      border-radius: 5px; /* Kenarları yuvarlat */
-      padding: 20px; /* İç boşluk */
-      margin-top: 20px; /* Üstten boşluk */
+    position: relative;
+    background-color: #ffdddd; /* Açık kırmızı arkaplan */
+    border: 1px solid #ff5555; /* Koyu kırmızı kenarlık */
+    border-radius: 5px; /* Kenarları yuvarlat */
+    padding: 20px; /* İç boşluk */
+    margin-top: 20px; /* Üstten boşluk */
   }
   .discounted-item h5 {
       color: #cc0000; /* Başlık rengi */
@@ -23,6 +25,22 @@
       font-weight: bold; /* İndirimli fiyat kalın yazı */
       color: #cc0000; /* Kırmızı renk */
   }
+  .exclamation-mark {
+            position: absolute;
+            top: 10px;
+            left: -30px;
+            font-size: 24px;
+            color: red;
+            animation: shake 0.5s infinite;
+        }
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            
+            50% { transform: translate(-3px, 0px) rotate(1deg); }
+        
+            100% { transform: translate(1px, -1px) rotate(1deg); }
+           
+        }
 </style>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
@@ -44,23 +62,14 @@
         <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Laudantium sit expedita culpa iste numquam nemo similique ipsum quas. Corrupti dolorum necessitatibus fugiat velit odio consequatur ullam eaque cupiditate, sunt laudantium delectus laborum asperiores animi distinctio quam accusamus nemo, dolore at omnis tempore atque neque, voluptatibus ipsum autem. Odit, quasi illum?</p>
 
      
-        {% if request.user.is_authenticated %}
-          <a href='#'><button class="btn btn-primary"> click for rent</button> </a>
-          {% else %}
+        {% if not request.user.is_authenticated %}
+          
           <a href={% url 'login' %}><button class="btn btn-primary"> giriş yap</button> </a>
         {% endif %}
         
         <a href="{% url 'contact' %}"><button class="btn btn-primary">iletişime geç!</button></a>
     </div>
-    <div class="col-md-5">
-      <div class="discounted-item">
-        <h5>İndirimli Ürün!</h5>
-        <p>{{discounted_iha.brand}}</p>
-        <p>Orijinal Fiyat: <span class="price">{{cached_data.original_price}}</span></p>
-        <p>İndirimli Fiyat: <span class="discounted-price">{{cached_data.discounted_price}}</span></p>
-        <p>İndirim Bitiş Tarihi: {{cached_data.valid_until}}</p>
-    </div>
-    </div>
+    
 
     
 </div>
@@ -68,6 +77,7 @@
   <div class="owl-carousel">
     {% for iha in data %}
     <div class="item">
+
       <div class="iha-card text-black text-center rounded-4 mb-5" style="min-height: 350px;background-color: #e3f9ff;">
           <img   width="200px" height="200px" src={{iha.photo}} alt={{iha.brand}} class="iha-card-image rounded-top-4">
           <div class="iha-card-body">
