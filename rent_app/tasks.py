@@ -73,3 +73,18 @@ def async_send_rental_email(iha_id, rental_date, return_date, email_to):
     thread.start()
 
 
+
+@shared_task
+def send_email_to_inactive_users():
+    threshold = datetime.now() - timedelta(days=1)
+    inactive_users = User.objects.filter(last_login__lt=threshold)
+    if not inactive_users:
+         return "No inactive users found."
+    for user in inactive_users:
+        send_mail(
+            'Your Account is Inactive',
+            'Please login to your account.',
+            EMAIL_HOST_USER,
+            [user.email],
+            fail_silently=False,
+        )

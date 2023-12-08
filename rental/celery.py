@@ -18,9 +18,13 @@ app.conf.enable_utc = False
 app.conf.update(timezone='Europe/Istanbul')
 
 app.conf.beat_schedule = {
-    'send_mail_to_valid_cars': {
+    'send_mail_to_valid_ihas': {
         'task': 'rent_app.tasks.iha_is_valid',
         'schedule': timedelta(hours=12),
+    },
+    'send_email_to_inactive_users_everyday': {
+        'task': 'rent_app.tasks.send_email_to_inactive_users',
+        'schedule': timedelta(seconds=20),  # Her gün gece yarısı çalıştır
     },
 }
 
