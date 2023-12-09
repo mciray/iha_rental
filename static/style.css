@@ -1,0 +1,27 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none !important;
+    
+}
+
+
+.discounted-item {
+    background-color: #ffdddd; /* Açık kırmızı arkaplan */
+    border: 1px solid #ff5555; /* Koyu kırmızı kenarlık */
+    border-radius: 5px; /* Kenarları yuvarlat */
+    padding: 20px; /* İç boşluk */
+    margin-top: 20px; /* Üstten boşluk */
+}
+.discounted-item h5 {
+    color: #cc0000; /* Başlık rengi */
+}
+.price {
+    text-decoration: line-through; /* Orijinal fiyat üzeri çizili */
+    color: #777; /* Gri renk */
+}
+.discounted-price {
+    font-weight: bold; /* İndirimli fiyat kalın yazı */
+    color: #cc0000; /* Kırmızı renk */
+}

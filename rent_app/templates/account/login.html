@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block site-title %}
+  
+{% endblock site-title %}
+{% block site-content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        
+        <div class="col-md-4 text-center">
+            
+            <h2>Contact Us</h2>
+
+            <p>Feel free to reach out to us with any questions or concerns.</p>
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                {{ form.as_p }}
+
+                <button class="btn btn-primary p-1" type="submit">Giriş Yap</button>
+
+            </form>
+
+            <p>Hesabın yok mu <a href={% url 'account_signup' %}>kayıt ol</a></p>
+    
+        </div>
+    </div>
+</div>
+  
+  
+{% endblock site-content %}

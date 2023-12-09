@@ -1,0 +1,119 @@
+{% extends 'admin_layout.html' %}
+{% block site-title %}
+  
+{% endblock site-title %}
+{% block site-content %}
+
+
+<div class="container bg_image h-full">
+    <br><br>
+    <div class="row justify-content-around">
+      <a href={% url 'home' %}><div class="btn btn-primary p-3">geri git</div></a>
+      {% if listed_ihas %}
+        {% for iha in listed_ihas %}
+      
+        <div class="col-md-3 m-2 box-shadow text-center">
+          <div class="item">
+            <input id="iha_id" class="d-none" type="text" value={{iha.id}}>
+            <div class="iha-card text-black text-center rounded-4 p-4 mb-5" style="min-height: 350px;">
+              <img src="{{ iha.photo }}" width="100%" height="200px" alt="{{ iha.brand }}" class="iha-card-image">
+              <div class="iha-card-body">
+                <h3 class="iha-card-rating">{{ iha.model }}</h3>
+                <h5 class="iha-card-title">{{ iha.brand }}</h5>
+                <p class="iha-card-price">{{ iha.price_per_day }} TL</p>
+                <p class="iha-card-description">
+                  Aerodynamic design, ready to hit the streets. Rent and get the new admiration from around.
+                </p>
+                <div class="iha-card-availability p-4">
+                  
+                  <p><strong>Avaiblety:</strong> Available Now</p>
+                  <button class="btn btn-danger delete-iha">sil</button>
+                  <a href="{% url 'admin_iha_update' iha.id %}"><button class="btn btn-warning">güncelle</button></a>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+      <div class="alert alert-info col-12">No iha added yet.</div>
+      <a href={% url 'create_iha' %}><button class="btn btn-primary"> iha oluştur </button></a>
+
+      {% endif %}
+        
+    </div>
+  </div>
+
+  <script>
+    $(document).ready(function () {
+   
+    $(".delete-iha").click(function (event) {
+      
+        event.preventDefault();
+
+     
+      let iha_id = $(this).closest('div.item').find('input').val();
+      console.log(iha_id);
+     
+
+        // AJAX delete request
+        $.ajax({
+            type: "DELETE",
+            url: `/api/ihas/${iha_id}/`,
+            headers: {
+                "X-CSRFToken": getCookie("csrftoken")
+            },
+            success: function (data) {
+                console.log("Başarıyla silinen kiralama:", data);
+                showSuccessAlert("Başarıyla silindi");
+                setTimeout(function () {
+                  location.href = "/superuser/list_ihas/";
+              }, 1500);
+
+               
+            },
+            error: function (error) {
+                console.error("Kiralama silme hatası:", error);
+                showErrorAlert("Kiralama silme hatası");
+            }
+        });
+    });
+    
+
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+            var cookies = document.cookie.split(";");
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === name + "=") {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+});
+function showSuccessAlert(message) {
+          Swal.fire({
+              icon: 'success',
+              title: 'Başarılı!',
+              text: message,
+              timer: 2000, // 2 saniye sonra otomatik olarak kapanır
+              showConfirmButton: false,
+          });
+      }
+      
+      function showErrorAlert(message) {
+          Swal.fire({
+              icon: 'error',
+              title: 'Hata!',
+              text: message,
+          });
+      }
+      
+</script>v
+
+{% endblock  %}

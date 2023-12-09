@@ -1,0 +1,237 @@
+{% extends "layout.html" %}
+{% block site-title %}
+  
+{% endblock site-title %}
+{% block site-content %}
+<div class="container mt-5 justify-content-center">
+  {% if messages %}
+  <ul class="messages bg-danger rounded-4 p-3 w-25 ">
+    {% for message in messages %}
+      <li{% if message.tags %} class="{{ message.tags }} mx-5"{% endif %}>{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+<a href={% url 'home' %}><div class="btn btn-primary p-3">geri git</div></a>
+    <input id="data_id" class="d-none" type="text" value={{data.id}}>
+    <input id="user_id" class="d-none" type="text" value={{data.user}}>
+      <h1>Update Rentals!</h1>
+     
+    <div class="col-md-6 m-auto">
+        <form method="post" id='rent_form_post' class="text-center">
+          {% csrf_token %}
+            <div class="form-group">
+              <label>Renter Name</label>
+            
+              <input type="text" class="form-control " readonly  value="" id="name" name="name"  required>
+            </div>
+            <div class="form-group">
+                <label>start date</label>
+                <input type="date" class="form-control "  value="" id="date_range" name="date_range"  required>
+            </div>
+          
+            <div class="form-group">
+              <label for="exampleFormControlSelect1">iha</label>
+              <select  name="iha" class="form-control" id="iha">
+                <option  value=""><p></p></option>
+               
+              </select>
+             <p></p>
+            </div>
+           
+            <div class="form-group">
+              <label for="exampleFormControlTextarea1">Your Subjects</label>
+              <textarea class="form-control" id="subject" rows="3">{{data.subject}}</textarea>
+            </div>
+            <button class="btn btn-primary" type="submit"> submit </button>
+          </form>
+    </div>
+      
+    </div>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script>
+    $(document).ready(function () {
+      let iha_id = '{{ data.iha.id }}'
+      let user= "{{data.user.username}}"
+      console.log(user)
+      $.ajax({
+          type: "GET",
+          url: `http://127.0.0.1:8000/api/rental/dates/${iha_id}/`,
+          success: function(data) {
+        
+            const disabledDates = data
+            .filter(item =>item.renter_name != user )
+            
+            .map(item => {
+                return {
+                    from: item.rental_date,
+                    to: item.return_date
+                };
+            });
+            
+        console.log(user)
+        const defaultDate = data
+            .find(item => item.renter_name === user )
+            
+            flatpickr("#date_range", {
+              mode:  "range",
+              minDate: start_date,
+              dateFormat: "Y-m-d",
+              altInput: true,
+              allowInput: true,
+              altFormat: "F j, Y",
+              defaultDate:[start_date,end_date],
+              disabled:disabledDates,
+              
+             
+          });
+          console.log(disabledDates,start_date,end_date)
+        },
+          error: function (error) {
+             console.log("error") 
+          },
+         
+      });
+      
+  });
+  </script>
+  <script>
+    let start_date="{{data.rental_date}}"
+    let end_date="{{data.return_date}}"
+    function initializeFlatpickr(data) {
+      flatpickr("#date_range", {
+          mode:  "range",
+          minDate: start_date,
+          dateFormat: "Y-m-d",
+          altInput: true,
+          allowInput: true,
+          altFormat: "F j, Y",
+         
+      });
+  }
+</script>
+<script>
+  $(document).ready(function () {
+    let rent_id = '{{ data.id }}'
+    
+    $.ajax({
+        type: "GET",
+        url: `http://127.0.0.1:8000/api/rental/${rent_id}/`,
+        success: function(data) {
+          console.log(data)
+          
+          $('#name').val(data.renter_name);
+          $('#start_date').val(data.rental_date);
+          $('#end_date').val(data.return_date);
+          let ihaSelect = $('#iha');
+          ihaSelect.empty(); 
+          ihaSelect.append($('<option>', {
+              value: data.iha.id,
+              text: data.iha.model
+          }));
+  
+          $('#subject').val(data.subject);
+      },
+        error: function (error) {
+           console.log("error") 
+        },
+        complete: function (data) {
+          console.log(data)
+          
+      },
+       
+    });
+    
+});
+</script>
+<script>
+  
+  $(document).ready(function () {
+    
+    $("#rent_form_post").submit(function (event) {
+      console.log(startDate,start_date)
+    
+        event.preventDefault();
+        let rental_id = '{{ data.id }}'
+        let user_id=$('#user_id').val();
+        var dateRange = document.getElementById('date_range').value;
+        var dates = dateRange.split(" to ");
+        console.log(dates)
+        if (dates[1]) {
+          var startDate = dates[0];
+          var endDate = dates[1];
+        } else {
+            var startDate = dates[0];
+            var endDate = dates[0];
+        }
+        var formData = {
+            renter_name: $("#name").val(),
+            rental_date:startDate,
+            return_date: endDate,
+            iha: $("#iha").val(),
+            subject: $("#subject").val(),
+            user:user_id,
+  
+        };
+        
+        function showSuccessAlert(message) {
+          Swal.fire({
+              icon: 'success',
+              title: 'Başarılı!',
+              text: message,
+              timer: 2000,
+              showConfirmButton: false,
+          });
+      }
+      
+      function showErrorAlert(message) {
+          Swal.fire({
+              icon: 'error',
+              title: 'Hata!',
+              text: message,
+          });
+      }
+      if( start_date!=startDate){
+        window.alert("başlangıç tarihleri aynı olmalı!") 
+        return 
+      }
+      $.ajax({
+        
+          type: "PUT",
+          url: `/api/rental/${rental_id}/`,
+          headers: {
+              "X-CSRFToken": getCookie("csrftoken")
+          },
+          data: JSON.stringify(formData),
+          contentType: "application/json",
+          success: function (data) {
+              console.log("Başarıyla güncellenen kiralama:", data);
+              showSuccessAlert("Başarıyla güncellendi");
+              
+              setTimeout(function () {
+                  location.href = "/";
+              }, 2000);
+          },
+          error: function (error) {
+              console.error("Kiralama güncelleme hatası:", error);
+              showErrorAlert("Kiralama güncelleme hatası");
+          }
+      });
+      function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+            var cookies = document.cookie.split(";");
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === name + "=") {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    });
+    
+});
+</script>
+{% endblock site-content %}

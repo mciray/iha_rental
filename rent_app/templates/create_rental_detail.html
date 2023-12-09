@@ -1,0 +1,247 @@
+{% extends "layout.html" %}
+{% block site-title %}
+  
+{% endblock site-title %}
+{% block site-content %}
+<style>
+  .rental-form-card {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+}
+
+.rental-form label {
+    font-weight: bold;
+}
+
+.rental-form input, .rental-form select, .rental-form textarea {
+    border-radius: 5px;
+}
+
+.rental-form button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.rental-form button:hover {
+    background-color: #0056b3;
+}
+</style>
+<div class="container mt-5 justify-content-around">
+  {% if messages %}
+  <ul class="messages bg-danger rounded-4 p-3 w-25 ">
+    {% for message in messages %}
+      <li{% if message.tags %} class="{{ message.tags }} mx-5"{% endif %}>{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <h1 class="text-center">Welcome </h1>
+    <p class="text-center">Welcome to our Car Rental Service. Book your dream car now!</p>
+  
+    <div class="card rental-form-card shadow-sm">
+      <div class="card-body">
+        <h2>{{iha.brand}}</h2>
+        <p>
+          At Mel-Car Rentals, we offer a wide range of high-quality vehicles for rent. Whether you need a compact car for a quick city trip or a spacious SUV for a family vacation, we have the perfect car for you.
+        </p>
+        <h2>Why Choose Us?</h2>
+        <input type="text" hidden name="" id="iha_id" value="{{iha.id}}">
+        <ul>
+            <li id="ihaId"></li>
+            <li id="ihaModel"></li>
+            <li id="ihaWeight"></li>
+            <li id="ihaYear"></li>
+            <li id="ihaPricePerDay"></li>
+            
+        </ul>
+        <div class="photo text-center">
+            <img id="ihaPhoto" height="250px" width="50%" src="" alt="IHA Photo">
+        </div>
+        
+        <a href='#' class="btn btn-primary d-block mx-auto my-3">Back to List of Cars</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <input type="text" id="user_id" hidden value="{{request.user.id}}">
+      <div class="rental-form-card p-4 shadow-sm">
+          <h2 class="text-center mb-4">Araç Kiralama Formu</h2>
+          <form id="rent_form_post" method="post" class="rental-form">
+           
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="name" class="form-label">Kiracı Adı</label>
+                <input type="text" class="form-control" id="name" name="name" value="{{ request.user.username }}" readonly required>
+            </div>
+            <div class="mb-3">
+                <label for="date_range" class="form-label">kiralama aralığı</label>
+                <input type="date" class="form-control" id="date_range" name="start_date" placeholder="Tarih aralığı belirtiniz!" required>
+            </div>
+            <div class="mb-3">
+                <label for="selected_iha" class="form-label">Araç Seçimi</label>
+          
+                <select name="car" class="form-control" id="selected_iha" required>
+                 
+                    <option value="" id="option_value"></option>
+                 
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="subject" class="form-label">Notlarınız</label>
+                <textarea class="form-control" id="subject" name="subject" placeholder="Notunuz.." rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Kirala</button>
+        </form>
+      </div>
+  </div>
+</div>
+</div>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+  <script>
+    $(document).ready(function () {
+      let iha_id = '{{ id }}'
+      var rentalDate = new Date();
+       rentalDate.setDate(rentalDate.getDate() - 1);
+  
+     
+      function initializeFlatpickr(data) {
+          flatpickr("#date_range", {
+              mode:  "range",
+              minDate: "today",
+              defaultDate: rentalDate,
+              dateFormat: "Y-m-d",
+              altInput: true,
+              allowInput: true,
+              altFormat: "F j, Y",
+              disable: data.map(function (dateRange) {
+                  return {
+                      from: rentalDate,
+                      to: new Date(dateRange.return_date)
+                  };
+              })
+          });
+      }
+      $.ajax({
+          type: "GET",
+          url: `http://127.0.0.1:8000/api/rental/dates/${iha_id}/`,
+          success: function (data) {
+              initializeFlatpickr(data);
+          },
+          error: function (error) {
+              initializeFlatpickr([]); 
+          },
+         
+      });
+      let myId = '{{ id }}';
+      $.ajax({
+        type: "GET",
+        url: `http://127.0.0.1:8000/api/ihas/${myId}/`,
+        success: function (data) {
+            $('#option_value').val(data.id).text(data.model);
+            $('#ihaId').text(data.id);
+            $('#ihaModel').text(data.model);
+            $('#ihaWeight').text(data.weight);
+            $('#ihaYear').text(data.year);
+            $('#ihaPricePerDay').text(data.price_per_day);
+            $('#ihaTypeName').text(data.iha_type.name);
+            $('#ihaPhoto').attr('src', data.photo);
+        },
+        error: function (error) {
+           console.log(error)
+        },
+       
+    });
+  });
+    
+</script>
+
+<script>
+  $(document).ready(function () {
+    $("#rent_form_post").submit(function (event) {
+      
+        event.preventDefault();
+        var dateRange = document.getElementById('date_range').value;
+        var dates = dateRange.split(" to ");
+        if (dates[1]) {
+          var startDate = dates[0];
+          var endDate = dates[1];
+        } else {
+            var startDate = dates[0];
+            var endDate = dates[0];
+        }
+        let user_id=$('#user_id').val();
+        var formData = {
+
+            renter_name: $("#name").val(),
+            rental_date: startDate,
+            return_date:endDate,
+            iha:$("#selected_iha").val(),
+            subject: $("#subject").val(),
+            user:user_id
+
+        };
+        
+        function showSuccessAlert(message) {
+          Swal.fire({
+              icon: 'success',
+              title: 'Başarılı!',
+              text: message,
+              timer: 2000, 
+              showConfirmButton: false,
+          });
+      }
+      
+      function showErrorAlert(message) {
+          Swal.fire({
+              icon: 'error',
+              title: 'Hata!',
+              text: message,
+          });
+      }
+      
+      $.ajax({
+          type: "POST",
+          url: `/api/rentals/create/`,
+          headers: {
+              "X-CSRFToken": getCookie("csrftoken")
+          },
+          data: JSON.stringify(formData),
+          contentType: "application/json",
+          success: function (data) {
+              console.log("Başarıyla güncellenen kiralama:", data);
+              showSuccessAlert("Başarıyla oluşturuldu");
+              
+              setTimeout(function () {
+                  location.href = "/";
+              }, 2000);
+          },
+          error: function (error) {
+              console.error("Kiralama güncelleme hatası:", error);
+              showErrorAlert("Kiralama güncelleme hatası");
+          }
+      });
+      function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+            var cookies = document.cookie.split(";");
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === name + "=") {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    });
+});
+</script>
+{% endblock site-content %}

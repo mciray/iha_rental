@@ -1,0 +1,125 @@
+{% extends 'admin_layout.html' %}
+{% block site-title %}
+    Update Iha
+{% endblock site-title %}
+{% block site-content %}
+    <div class="container mt-5">
+        <a href="{% url 'home' %}"><button class="btn btn-primary">Go Back</button></a>
+        <h1>Update Iha</h1>
+        <div class="row">
+            <div class="col-md-3 mt-5">
+                <a href={% url 'home' %}><div class="btn btn-primary p-3">geri git</div></a>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for type in iha_types %}
+                            <tr>
+                                <td>{{ type.id }}</td>
+                                <td>{{ type.name }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="col-md-6 m-auto">
+              
+                <form id="iha_update_form" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                        <label for="photo_id">iha Photo</label>
+                        <input type="file" class="form-control" id="photo_id" value="{{data.photo}}" name="photo">
+                    </div>
+                    <div class="form-group">
+                        <label for="iha_type_id">iha Type</label>
+                        <input type="text" class="form-control" id="iha_type" name="iha_type" value="{{ data.iha_type }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="brand_id">brand</label>
+                        <input type="text" class="form-control" id="brand_id" name="brand" value="{{ data.brand }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="model_id">Model</label>
+                        <input type="text" class="form-control" id="model_id" name="model" value="{{ data.model }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="year_id">Year</label>
+                        <input type="number" class="form-control" id="year_id" name="year" value="{{ data.year }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="is_active_id">Active Status</label>
+                        <select class="form-control" id="is_active_id" name="is_active">
+                            <option value="true" {% if data.is_active %} selected {% endif %}>Active</option>
+                            <option value="false" {% if not data.is_active %} selected {% endif %}>Inactive</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="price_per_day_id">Price Per Day</label>
+                        <input type="text" class="form-control" id="price_per_day_id" name="price_per_day" value="{{ data.price_per_day }}" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Iha</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            $("#iha_update_form").submit(function (event) {
+                event.preventDefault();
+                let formData = new FormData(this);
+                let iha_id = "{{ data.id }}"; 
+                
+                
+                $.ajax({
+                    type: "PUT",
+                    url: `/api/ihas/${iha_id}/`,
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    success: function (data) {
+                        console.log("Başarıyla güncellendi kiralama:", data);
+                        console.log(formData)
+                        showSuccessAlert("Başarıyla güncellendi");
+                        setTimeout(function () {
+                          location.href = "/superuser/";
+                      }, 1500);
+        
+                        // Remove the corresponding table row from the UI
+                        
+                    },
+                    error: function (error) {
+                        console.error("güncelleme hatası:", error);
+                        showErrorAlert("güncelleme hatas:");
+                    }
+                });
+            });
+        });
+
+        function showSuccessAlert(message) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Başarılı!',
+                text: message,
+                timer: 2000, // 2 saniye sonra otomatik olarak kapanır
+                showConfirmButton: false,
+            });
+        }
+        
+        function showErrorAlert(message) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Hata!',
+                text: message,
+            });
+        }
+    </script>
+{% endblock site-content %}

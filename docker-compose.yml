@@ -1,0 +1,62 @@
+version: "3.8"
+   
+services:
+    django:
+        build: .
+        container_name: django
+        command: python manage.py runserver 0.0.0.0:8000
+        volumes:
+            - .:/usr/src/app/
+        ports:
+            - "8000:8000"
+        depends_on:
+            - localhost  
+    localhost:
+        image: postgres
+        container_name: pgdb
+        environment:
+            - POSTGRES_DB=rent_car
+            - POSTGRES_USER=melih
+            - POSTGRES_PASSWORD=123456
+        volumes:
+            - pgdata:/var/lib/postgresql/data/
+        ports:
+            - "5436:5432"
+    celery:
+        build: .
+        command: celery -A rental.celery worker --loglevel=info
+        container_name: celery-worker-1
+        volumes:
+        - .:/usr/src/app
+        environment:
+        - DEBUG=1
+        - DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,[::1]
+        - CELERY_BROKER=redis://redis:6379/0
+        - CELERY_BACKEND=redis://redis:6379/0
+        depends_on:
+        - django
+        - redis
+
+    celery_beat:
+        build: .
+        command: celery -A rental.celery beat -l INFO
+        volumes:
+        - .:/usr/src/app
+        environment:
+        - DEBUG=1
+        - DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,[::1]
+        - CELERY_BROKER=redis://redis:6379/0
+        - CELERY_BACKEND=redis://redis:6379/0
+        depends_on:
+        - django
+        - redis
+    redis:
+        image: "redis:alpine"
+        ports:
+            - "6379:6379"
+  
+    
+volumes:
+    pgdata:
+  
+

@@ -1,0 +1,129 @@
+{% extends 'layout.html' %}
+
+{% block site-title %}
+  CARS
+{% endblock site-title %}
+
+{% block site-content %}
+<style>
+  .h-full {
+    min-height: 100vh;
+  }
+
+  .box-shadow {
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    background-color: #96b0c5b3;
+    border-radius: 12px;
+    border: 1px solid rgba(150, 176, 197, 0.125);
+  }
+
+  .iha-card {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s;
+  }
+
+  .iha-card:hover {
+    transform: scale(1.03);
+  }
+
+  .iha-card-image {
+    object-fit: cover;
+    height: 200px; /* Daha küçük yükseklik */
+    border-radius: 12px 12px 0 0;
+  }
+
+  .iha-card-title {
+    font-size: 1.5rem;
+    margin: 10px 0;
+  }
+
+  .car-card-rating {
+    color: #777;
+  }
+
+  .iha-card-price {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin: 10px 0;
+  }
+
+  .iha-card-description {
+    margin: 10px 0;
+  }
+
+  .iha-card-availability {
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-radius: 0 0 12px 12px;
+  }
+
+  .rent-button {
+    width: 100%;
+  }
+  input[type="text"]{
+    width: 50%; 
+    padding: 12px; 
+    margin: 8px 0; 
+    border: 1px solid #ccc; 
+    border-radius: 4px; 
+
+    }
+    select {
+        width: 50%;
+        padding: 12px; 
+        margin: 8px 0; 
+        border: 1px solid #ccc;
+        border-radius: 4px; 
+
+    }
+</style>
+
+<div class="container  bg_image h-full">
+  <h3><a href={% url 'list_ihas' %}>Kategori</a></h3>
+  <div class="select-content gap-5 justify-content-center d-flex text-center d-flex mb-4">
+
+    <form class="d-flex" action="{% url 'list_ihas' %}" method="get">
+        {{form.as_p}}
+      <input type="submit" value="submit" class="btn btn-primary " >
+    </form>
+  </div>
+
+<div id="ihasList">
+    
+</div>
+  <div id="ihas" class="row justify-content-around mt-5">
+    
+    {% for iha in ihas %}
+  
+    <div class="col-md-3 m-2 box-shadow text-center">
+      <div class="item">
+        <div class="car-card text-black text-center rounded-4 p-4 mb-5" style="min-height: 350px;">
+          <img src="http://127.0.0.1:8000/{{iha.photo}}" width="100%" height="200px" alt="{{ iha.brand }}" class="iha-card-image">
+          <div class="car-card-body">
+            <span>{{ iha.iha_type.name }}</span>
+            <h3 class="iha-card-title">{{ iha.brand }}</h3>
+            <p class="iha-card-rating">{{ iha.model }}</p>
+            <p class="iha-card-price">{{ iha.price_per_day }} TL</p>
+            <p class="iha-card-description">
+              Aerodynamic design, ready to hit the streets. Rent and get the new admiration from around.
+            </p>
+            <div class="car-card-availability p-4">
+              <p><strong>Avaiblety:</strong> Available Now</p>
+              <a href={% url 'create_rental_detail'  iha.id  %} class="rent-button btn btn-primary">Rent Now</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+    <ul class="pagination" id="pagination">
+      <!-- Sayfalama düğmeleri buraya gelecek -->
+  </ul>
+  </div>
+</div>
+
+  
+{% endblock site-content %}
