@@ -72,8 +72,8 @@ docker-compose up
  - #(Celery)Uzun süre giriş yapmayan Kullanıcılar için Siteye ziyaret etmeleri için hatırlatıcı bir mail atıyorum kullanıcıları siteye çekebilmek için.
    - ![inactive](https://github.com/mciray/iha_rental/assets/81428294/9a823b33-a843-4905-bbf2-bb50f572ce87)
   
- -#(Celery) Burada bütün kullanıcılar için sitemizdeki ürünleri günlük fiyatları ve görüntüleri ile birlikte kullanıcılara iletiyorum.
-![ihalar](https://github.com/mciray/iha_rental/assets/81428294/d43c24b6-04d9-4553-901a-3cde10be9f43)
+ - (Celery) Burada bütün kullanıcılar için sitemizdeki ürünleri günlük fiyatları ve görüntüleri ile birlikte kullanıcılara iletiyorum.
+    - ![ihalar](https://github.com/mciray/iha_rental/assets/81428294/d43c24b6-04d9-4553-901a-3cde10be9f43)
 
 
 
